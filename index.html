@@ -95,7 +95,7 @@
       }).then((unityInstance) => {
         document.querySelector("#unity-loading-bar").style.display = "none";
 
-        // 🔥 ENTRA EM FULLSCREEN NO PRIMEIRO CLIQUE DO USUÁRIO
+       
         const goFullscreen = () => {
           if (canvas.requestFullscreen) canvas.requestFullscreen();
           else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
