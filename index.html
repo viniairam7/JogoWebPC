@@ -1,148 +1,142 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | newAventure</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity Web Player | newAventure</title>
 
-    <style>
-      /* Botão "Sobre" no canto superior direito */
-      #sobre-btn {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        background-color: #ff9f00;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-family: sans-serif;
-        color: white;
-        text-decoration: none;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        cursor: pointer;
-        z-index: 9999;
-      }
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
 
-      #sobre-btn:hover {
-        background-color: #ffb733;
-      }
+  <style>
+    /* BOTÃO SOBRE — FIXO NO CANTO SUPERIOR DIREITO */
+    #sobre-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 99999;
+      background: orange;
+      padding: 10px 18px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+    }
 
-      html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-      }
+    /* AJUSTE PARA GARANTIR FULLSCREEN DO CANVAS */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: #000;
+    }
+    #unity-container {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    #unity-canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
+</head>
 
-      #unity-container {
-        width: 100vw !important;
-        height: 100vh !important;
-      }
+<body>
 
-      #unity-canvas {
-        width: 100vw !important;
-        height: 100vh !important;
-      }
-    </style>
-  </head>
-  <body>
+  <!-- BOTÃO SOBRE (NÃO ALTERA NADA DO JOGO) -->
+  <button id="sobre-btn">Sobre</button>
 
-    <!-- Botão Sobre -->
-    <a id="sobre-btn" href="https://fox-adventure.vercel.app/">Sobre</a>
-
-    <div id="unity-container">
-      <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1"></canvas>
-
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-
-      <div id="unity-warning"></div>
-
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">newAventure</div>
+  <div id="unity-container">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
       </div>
     </div>
+    <div id="unity-warning"></div>
+    <div id="unity-footer">
+      <div id="unity-logo-title-footer"></div>
+      <div id="unity-fullscreen-button"></div>
+      <div id="unity-build-title">newAventure</div>
+    </div>
+  </div>
 
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
+  <script>
+    // BOTÃO SOBRE — mesMAPA PÁGINA atual (NÃO ABRE ABA NOVA)
+    document.getElementById("sobre-btn").onclick = function () {
+      window.location.href = "https://fox-adventure.vercel.app/";
+    };
 
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
+    var canvas = document.querySelector("#unity-canvas");
+
+    function unityShowBanner(msg, type) {
+      var warningBanner = document.querySelector("#unity-warning");
+      function updateBannerVisibility() {
+        warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
       }
-
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/JogoWebPC.loader.js";
-
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/JogoWebPC.data",
-        frameworkUrl: buildUrl + "/JogoWebPC.framework.js",
-        codeUrl: buildUrl + "/JogoWebPC.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "newAventure",
-        productVersion: "1.0",
-        showBanner: unityShowBanner,
-      };
-
-      // Ajusta o canvas para tela cheia automaticamente
-      function ajustarTela() {
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
+      var div = document.createElement('div');
+      div.innerHTML = msg;
+      warningBanner.appendChild(div);
+      if (type == 'error') div.style = 'background: red; padding: 10px;';
+      else {
+        if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+        setTimeout(function () {
+          warningBanner.removeChild(div);
+          updateBannerVisibility();
+        }, 5000);
       }
+      updateBannerVisibility();
+    }
 
-      window.addEventListener("resize", ajustarTela);
-      ajustarTela();
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/JogoWebPC.loader.js";
+    var config = {
+      arguments: [],
+      dataUrl: buildUrl + "/JogoWebPC.data",
+      frameworkUrl: buildUrl + "/JogoWebPC.framework.js",
+      codeUrl: buildUrl + "/JogoWebPC.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "newAventure",
+      productVersion: "1.0",
+      showBanner: unityShowBanner,
+    };
 
-      document.querySelector("#unity-loading-bar").style.display = "block";
+    // FULLSCREEN AUTOMÁTICO
+    config.devicePixelRatio = window.devicePixelRatio;
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
+    document.querySelector("#unity-loading-bar").style.display = "block";
 
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = (100 * progress) + "%";
-        }).then((unityInstance) => {
-          document.querySelector("#unity-loading-bar").style.display = "none";
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+      }).then((unityInstance) => {
+        document.querySelector("#unity-loading-bar").style.display = "none";
 
-          // força tela cheia automaticamente
+        // Primeiro quadro → ativa fullscreen
+        setTimeout(() => {
           unityInstance.SetFullscreen(1);
+        }, 200);
 
-          document.querySelector("#unity-fullscreen-button").onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
+        document.querySelector("#unity-fullscreen-button").onclick = () => {
+          unityInstance.SetFullscreen(1);
+        };
 
-        }).catch((message) => {
-          alert(message);
-        });
-      };
+      }).catch((message) => {
+        alert(message);
+      });
+    };
 
-      document.body.appendChild(script);
-    </script>
-
-  </body>
+    document.body.appendChild(script);
+  </script>
+</body>
 </html>
